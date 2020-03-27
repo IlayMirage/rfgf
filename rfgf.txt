@@ -8,7 +8,7 @@ CREATE CONSTRAINT ON (uch:`УчастокНедр`) ASSERT uch.rgf_pass IS UNIQU
 CREATE CONSTRAINT ON (reg:`РегионРФ`) ASSERT reg.name IS UNIQUE;
 CREATE CONSTRAINT ON (dist:`ОбластьРФ`) ASSERT dist.name IS UNIQUE;
 
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 // 1. Создаем узлы паспортов
 MERGE (pass:ПаспортГКМ {id:row.gkm_id})
 ON CREATE SET	pass.name = row.name,
@@ -20,17 +20,17 @@ ON CREATE SET	pass.name = row.name,
                 pass.info = row.info;
                 
 // 2. Создаем узлы прямых связей с паспортами (:Год, :Геолфонд, :Геоллист)
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 MATCH (pass:`ПаспортГКМ` {id:row.gkm_id})
 MERGE (y:Год {year:toInteger(row.year)})
 MERGE (pass)-[:ГОД_СОСТАВЛЕНИЯ]->(y);
 
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 MATCH (pass:`ПаспортГКМ` {id:row.gkm_id})
 MERGE (fond:Геолфонд {name:row.geolfond})
 MERGE (pass)-[:В_АРХИВЕ]->(fond);
 
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 MATCH (pass:`ПаспортГКМ` {id:row.gkm_id})
 MERGE (list:ГеолЛист {name:row.geolist})
 MERGE (pass)-[:НА_ЛИСТЕ]->(list);
@@ -47,19 +47,19 @@ WITH uch, pass
 MERGE (uch)-[:ЕСТЬ_ПАСПОРТ]->(pass);
 
 // 4. Узлы регионов и областей и связи с ними и между ними
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 MATCH (uch:`УчастокНедр` {rgf_pass:row.rgf_pass})
 MERGE (reg:РегионРФ {name:row.region})
 MERGE (uch)-[:РАСПОЛОЖЕН_В]->(reg);
 
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 MATCH (uch:`УчастокНедр` {rgf_pass:row.rgf_pass})
 WITH uch, row.district as distr
 WHERE distr IS NOT null
 MERGE (dist:ОбластьРФ {name:distr})
 MERGE (uch)-[:РАСПОЛОЖЕН_В]->(dist);
 
-LOAD CSV WITH HEADERS FROM 'file:///export_file.csv' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv' AS row FIELDTERMINATOR ';'
 MATCH (reg:`РегионРФ` {name:row.region})
 MATCH (dist:`ОбластьРФ` {name:row.district})
 MERGE (dist)-[:В_РЕГИОНЕ]->(reg);
