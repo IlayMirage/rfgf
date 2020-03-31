@@ -9,7 +9,7 @@ CREATE CONSTRAINT ON (reg:`РегионРФ`) ASSERT reg.name IS UNIQUE;
 CREATE CONSTRAINT ON (dist:`ОбластьРФ`) ASSERT dist.name IS UNIQUE;
 CREATE CONSTRAINT ON (res:`Ресурс`) ASSERT res.name IS UNIQUE;
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 // 1. Создаем узлы паспортов
 MERGE (pass:ПаспортГКМ {id:row.gkm_id})
 ON CREATE SET	pass.name = row.name,
@@ -21,17 +21,17 @@ ON CREATE SET	pass.name = row.name,
                 pass.info = row.info;
                 
 // 2. Создаем узлы прямых связей с паспортами (:Год, :Геолфонд, :Геоллист)
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 MATCH (pass:`ПаспортГКМ` {id:row.gkm_id})
 MERGE (y:Год {year:toInteger(row.year)})
 MERGE (pass)-[:ГОД_СОСТАВЛЕНИЯ]->(y);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 MATCH (pass:`ПаспортГКМ` {id:row.gkm_id})
 MERGE (fond:Геолфонд {name:row.geolfond})
 MERGE (pass)-[:В_АРХИВЕ]->(fond);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 MATCH (pass:`ПаспортГКМ` {id:row.gkm_id})
 MERGE (list:ГеолЛист {name:row.geolist})
 MERGE (pass)-[:НА_ЛИСТЕ]->(list);
@@ -48,37 +48,37 @@ WITH uch, pass
 MERGE (uch)-[:ЕСТЬ_ПАСПОРТ]->(pass);
 
 // 4. Узлы регионов и областей и связи с ними и между ними
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 MATCH (uch:`УчастокНедр` {rgf_pass:row.rgf_pass})
 MERGE (reg:РегионРФ {name:row.region})
 MERGE (uch)-[:РАСПОЛОЖЕН_В]->(reg);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 MATCH (uch:`УчастокНедр` {rgf_pass:row.rgf_pass})
 WITH uch, row.district as distr
 WHERE distr IS NOT null
 MERGE (dist:ОбластьРФ {name:distr})
 MERGE (uch)-[:РАСПОЛОЖЕН_В]->(dist);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 MATCH (reg:`РегионРФ` {name:row.region})
 MATCH (dist:`ОбластьРФ` {name:row.district})
 MERGE (dist)-[:В_РЕГИОНЕ]->(reg);
 
 //5. Узлы ресурсов и связи с ними
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 WITH DISTINCT split(row.res_primary, ',') as res
 UNWIND res as r
 WITH DISTINCT r
 MERGE (re:Ресурс {name:r});
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 WITH DISTINCT split(row.res_secondary, ',') as res
 UNWIND res as r
 WITH DISTINCT r
 MERGE (re:Ресурс {name:r});
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 WITH row.rgf_pass AS rgf_pass, toBoolean(row.valid) as valid, split(row.res_primary, ',') as res
 WHERE valid=True
 MATCH (u:`УчастокНедр`{rgf_pass:rgf_pass})
@@ -86,7 +86,7 @@ UNWIND res as r
 MATCH (resource:`Ресурс`{name:r})
 MERGE (u)-[:СОДЕРЖИТ_ПИ {type:'Основное'}]->(resource);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3YWRLJ3S237SNIG26QO7PG' AS row FIELDTERMINATOR ';'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/export_file.csv?token=ANK5WUG3CFU4H2ZUD63CEYS6QPBLA' AS row FIELDTERMINATOR ';'
 WITH row.rgf_pass AS rgf_pass, toBoolean(row.valid) as valid, split(row.res_secondary, ',') as res
 WHERE valid=True
 MATCH (u:`УчастокНедр`{rgf_pass:rgf_pass})
@@ -95,7 +95,7 @@ MATCH (resource:`Ресурс`{name:r})
 MERGE (u)-[:СОДЕРЖИТ_ПИ {type:'Попутное'}]->(resource);
 
 //6. Узлы и связи с координатами
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/all_coords.csv?token=ANK5WUEUQH2WKSUPMHSWJLS6QO6WU' AS row FIELDTERMINATOR '|'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/all_coords.csv?token=ANK5WUAMMPQL5WTST6Z264S6QPC4Y' AS row FIELDTERMINATOR '|'
 MATCH (u:`УчастокНедр` {rgf_pass:row.rgf_pass})
 WITH u, row
 WHERE row.valid = 'True' AND row.type = 'point'
@@ -103,7 +103,7 @@ WITH u, split(row.coords, ',') as c
 CREATE (t:КоордТочка {lat:c[0], long:c[1]})
 CREATE (u)-[:`РАСПОЛОЖЕН_В`]->(t);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/all_coords.csv?token=ANK5WUEUQH2WKSUPMHSWJLS6QO6WU' AS row FIELDTERMINATOR '|'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/all_coords.csv?token=ANK5WUAMMPQL5WTST6Z264S6QPC4Y' AS row FIELDTERMINATOR '|'
 MATCH (u:`УчастокНедр` {rgf_pass:row.rgf_pass})
 WITH u, row
 WHERE row.valid = 'True' AND row.type = 'area'
@@ -111,7 +111,7 @@ WITH u, row.coords as c, row.description as d
 CREATE (t:КоордОбласть {coords:c, description:d})
 CREATE (u)-[:`РАСПОЛОЖЕН_В`]->(t);
 
-LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/all_coords.csv?token=ANK5WUEUQH2WKSUPMHSWJLS6QO6WU' AS row FIELDTERMINATOR '|'
+LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/IlayMirage/rfgf/master/all_coords.csv?token=ANK5WUAMMPQL5WTST6Z264S6QPC4Y' AS row FIELDTERMINATOR '|'
 MATCH (p:`ПаспортГКМ` {id:row.gkm_id})
 WITH p, row
 WHERE row.valid = 'False' AND row.type = 'point'
