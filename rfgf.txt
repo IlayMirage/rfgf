@@ -1,4 +1,4 @@
-// ЕДИНЫЙ 2.3
+// ЕДИНЫЙ 2.4
 
 CREATE CONSTRAINT ON (pass:`ПаспортГКМ`) ASSERT pass.id IS UNIQUE;
 CREATE CONSTRAINT ON (y:`Год`) ASSERT y.year IS UNIQUE;
